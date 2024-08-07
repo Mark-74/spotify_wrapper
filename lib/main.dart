@@ -7,7 +7,7 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    print('Error loading .env file');
+    print('Error loading .env file' + e.toString());
   }
   runApp(const MyApp());
 }
@@ -40,6 +40,6 @@ class _SpotifyWrapperAppState extends State<SpotifyWrapperApp> {
     return MaterialApp(
         theme: ThemeData.dark(),
         initialRoute: '/',
-        routes: {'/': (context) => const Homepage()});
+        routes: {'/': (context) => Homepage()});
   }
 }
