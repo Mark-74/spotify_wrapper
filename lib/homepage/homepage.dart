@@ -96,7 +96,7 @@ class _HomepageState extends State<Homepage> {
           ),
           // Bottom row
           Expanded(
-              flex: 1,
+              flex: 2,
               child: BottomAppBar(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -104,23 +104,68 @@ class _HomepageState extends State<Homepage> {
                     const Expanded(flex: 1, child: SizedBox()),
                     Expanded(
                       flex: 2,
-                      child: StreamBuilder(
-                          stream: player.onPositionChanged,
-                          builder: (context, data) {
-                            return ProgressBar(
-                              progress: data.data ?? const Duration(seconds: 0),
-                              total: duration ?? const Duration(minutes: 4),
-                              bufferedBarColor: Colors.white38,
-                              baseBarColor: Colors.white10,
-                              thumbColor: Colors.white,
-                              timeLabelTextStyle:
-                                  const TextStyle(color: Colors.white),
-                              progressBarColor: Colors.white,
-                              onSeek: (duration) {
-                                player.seek(duration);
-                              },
-                            );
-                          }),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.skip_previous,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    if (player.state == PlayerState.playing) {
+                                        await player.pause();
+                                      } else {
+                                        await player.resume();
+                                      }
+                                    setState(() {});
+                                  },
+                                  icon: Icon(
+                                    player.state == PlayerState.playing
+                                        ? Icons.pause_circle_filled 
+                                        : Icons.play_circle_filled,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.skip_next,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          StreamBuilder(
+                              stream: player.onPositionChanged,
+                              builder: (context, data) {
+                                return ProgressBar(
+                                  progress:
+                                      data.data ?? const Duration(seconds: 0),
+                                  total: duration ?? const Duration(minutes: 4),
+                                  bufferedBarColor: Colors.white38,
+                                  baseBarColor: Colors.white10,
+                                  thumbColor: Colors.white,
+                                  timeLabelTextStyle:
+                                      const TextStyle(color: Colors.white),
+                                  progressBarColor: Colors.white,
+                                  onSeek: (duration) {
+                                    player.seek(duration);
+                                  },
+                                );
+                              }),
+                        ],
+                      ),
                     ),
                     const Expanded(flex: 1, child: SizedBox())
                   ],
