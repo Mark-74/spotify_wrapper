@@ -1,6 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_wrapper/homepage/leftbar.dart';
 import 'package:spotify_wrapper/homepage/menu.dart';
@@ -27,7 +28,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  late AudioPlayer player;
+  late AudioPlayer player = widget.player;
+  Track? currentTrack;
   Duration? duration;
 
   @override
@@ -38,8 +40,6 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
-    player = widget.player;
-
     player.onPlayerStateChanged.listen((event) {
       setState(() {});
     });
@@ -51,6 +51,7 @@ class _HomepageState extends State<Homepage> {
         .then((track) async {
       String? songName = track.name;
       if (songName != null) {
+        currentTrack = track;
         final yt = YoutubeExplode();
         final video = (await yt.search.search(songName)).first;
         final videoId = video.id.value;
@@ -74,17 +75,17 @@ class _HomepageState extends State<Homepage> {
             child: UpperBar(),
           ),
 
-          const Expanded(
+          Expanded(
             flex: 8,
             child: Row(
               children: <Widget>[
                 // Left column
-                Expanded(
+                const Expanded(
                   flex: 1,
                   child: Leftbar(),
                 ),
                 // Center body
-                Expanded(
+                const Expanded(
                   flex: 5,
                   child: CenterMenu(),
                 ),
@@ -92,7 +93,12 @@ class _HomepageState extends State<Homepage> {
                 // Right column
                 Expanded(
                   flex: 2,
-                  child: Rightbar(),
+                  child:Builder(builder: (context) {
+                    if (currentTrack == null) {
+                      return const DecoratedBox(decoration: BoxDecoration(color: Color(0xFF121212)), child: SizedBox(height: double.infinity,),);
+                    }
+                    return Rightbar(artist: currentTrack!.artists!.first.name!, songName: currentTrack!.name!, imageUrl:currentTrack!.album!.images!.first.url!);
+                  }),
                 ),
               ],
             ),
