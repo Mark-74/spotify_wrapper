@@ -31,6 +31,12 @@ class _HomepageState extends State<Homepage> {
   Duration? duration;
 
   @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     player = widget.player;
 
@@ -48,6 +54,7 @@ class _HomepageState extends State<Homepage> {
         var manifest = await yt.videos.streamsClient.getManifest(videoId);
         var audioUrl = manifest.audioOnly.first.url;
         player.play(UrlSource(audioUrl.toString()));
+        setState(() {});
       }
     });
     super.initState();
@@ -97,19 +104,23 @@ class _HomepageState extends State<Homepage> {
                     const Expanded(flex: 1, child: SizedBox()),
                     Expanded(
                       flex: 2,
-                      child: ProgressBar(
-                        progress: const Duration(seconds: 0),
-                        total: duration ?? const Duration(minutes: 4),
-                        bufferedBarColor: Colors.white38,
-                        baseBarColor: Colors.white10,
-                        thumbColor: Colors.white,
-                        timeLabelTextStyle:
-                            const TextStyle(color: Colors.white),
-                        progressBarColor: Colors.white,
-                        onSeek: (duration) {
-                          print('user selected a new time $duration');
-                        },
-                      ),
+                      child: StreamBuilder(
+                          stream: player.onPositionChanged,
+                          builder: (context, data) {
+                            return ProgressBar(
+                              progress: data.data ?? const Duration(seconds: 0),
+                              total: duration ?? const Duration(minutes: 4),
+                              bufferedBarColor: Colors.white38,
+                              baseBarColor: Colors.white10,
+                              thumbColor: Colors.white,
+                              timeLabelTextStyle:
+                                  const TextStyle(color: Colors.white),
+                              progressBarColor: Colors.white,
+                              onSeek: (duration) {
+                                player.seek(duration);
+                              },
+                            );
+                          }),
                     ),
                     const Expanded(flex: 1, child: SizedBox())
                   ],
