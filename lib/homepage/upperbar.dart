@@ -12,15 +12,34 @@ class UpperBar extends StatefulWidget {
 class _UpperBarState extends State<UpperBar> {
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: const Text("Spotify Wrapper"),
-      actions: <Widget>[
-        IconButton(
-          alignment: Alignment.centerRight,
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+          color: Color(0xFF121212),
+          border: Border(
+            bottom: BorderSide(width: 0.4, color: Colors.white),
+          )),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: IconButton(
+                alignment: Alignment.centerRight,
+                icon: const Icon(Icons.menu),
+                onPressed: () {},
+              ),
+            ),
+            const Text(
+              "Spotify Wrapper",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

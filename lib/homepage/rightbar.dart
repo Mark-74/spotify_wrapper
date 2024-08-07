@@ -12,44 +12,51 @@ class Rightbar extends StatefulWidget {
 class _RightbarState extends State<Rightbar> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Padding(
-      padding: EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                SizedBox(
-                  child: Icon(Icons.person, size: 300),
+    return const DecoratedBox(
+        decoration: BoxDecoration(
+            color: Color(0xFF121212),
+            border: Border(
+              left: BorderSide(width: 0.4, color: Colors.white),
+            )),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    SizedBox(
+                      child: Icon(Icons.person, size: 300),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 40,
+                      child: Text(
+                        "songnamesongname",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      child: Icon(Icons.person, size: 300),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 40,
+                      child: Text(
+                        "infoinfoinfoinfo",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10),
-                SizedBox(
-                  height: 40,
-                  child: Text(
-                    "songnamesongname",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  child: Icon(Icons.person, size: 300),
-                ),
-                SizedBox(height: 10),
-                SizedBox(
-                  height: 40,
-                  child: Text(
-                    "infoinfoinfoinfo",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }

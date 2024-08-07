@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/homepage.dart';
-import 'package:spotify_wrapper/test.dart';
+//import 'package:spotify_wrapper/test.dart';
 
 void main() async {
-  try{
+  try {
     await dotenv.load(fileName: '.env');
-  } catch(e){
+  } catch (e) {
     print('Error loading .env file');
   }
   runApp(const MyApp());
@@ -19,7 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData.from(colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1DB954), brightness: Brightness.dark)),
+      theme: ThemeData.from(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF1DB954), brightness: Brightness.dark)),
       home: const SpotifyWrapperApp(),
     );
   }
@@ -33,15 +35,11 @@ class SpotifyWrapperApp extends StatefulWidget {
 }
 
 class _SpotifyWrapperAppState extends State<SpotifyWrapperApp> {
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Homepage()
-      }
-    );
+        theme: ThemeData.dark(),
+        initialRoute: '/',
+        routes: {'/': (context) => const Homepage()});
   }
 }

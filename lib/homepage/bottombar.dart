@@ -19,6 +19,12 @@ class _BottombarState extends State<Bottombar> {
             Icons.person,
             size: 50,
           ),
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 100,
+                height: 40,
+              ))
         ],
       ),
     );
