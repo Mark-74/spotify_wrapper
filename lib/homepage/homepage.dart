@@ -40,6 +40,10 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     player = widget.player;
 
+    player.onPlayerStateChanged.listen((event) {
+      setState(() {});
+    });
+
     final spotify = SpotifyApi(SpotifyApiCredentials(
         widget.credentials['client_id'], widget.credentials['client_secret']));
     spotify.tracks
@@ -53,8 +57,7 @@ class _HomepageState extends State<Homepage> {
         duration = video.duration;
         var manifest = await yt.videos.streamsClient.getManifest(videoId);
         var audioUrl = manifest.audioOnly.first.url;
-        player.play(UrlSource(audioUrl.toString()));
-        setState(() {});
+        await player.play(UrlSource(audioUrl.toString()));
       }
     });
     super.initState();
@@ -125,11 +128,10 @@ class _HomepageState extends State<Homepage> {
                                       } else {
                                         await player.resume();
                                       }
-                                    setState(() {});
                                   },
                                   icon: Icon(
                                     player.state == PlayerState.playing
-                                        ? Icons.pause_circle_filled 
+                                        ? Icons.pause
                                         : Icons.play_circle_filled,
                                     color: Colors.white,
                                     size: 50,
