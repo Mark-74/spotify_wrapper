@@ -41,6 +41,7 @@ dependencies:
   audio_video_progress_bar: ^2.0.3
   audioplayers_linux: ^3.1.0
   audioplayers: ^5.2.1
+  window_manager: ^0.3.9
 
 dev_dependencies:
   flutter_test:

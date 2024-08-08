@@ -6,7 +6,6 @@ import 'package:spotify/spotify.dart';
 import 'package:spotify_wrapper/homepage/leftbar.dart';
 import 'package:spotify_wrapper/homepage/menu.dart';
 import 'package:spotify_wrapper/homepage/rightbar.dart';
-import 'package:spotify_wrapper/homepage/upperbar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -42,7 +41,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     player.onPlayerStateChanged.listen((event) {
-      setState(() {});
+      setState(() {}); //TODO: update only bottom and right bar, not the whole page
     });
 
     final spotify = SpotifyApi(SpotifyApiCredentials(
@@ -63,11 +62,6 @@ class _HomepageState extends State<Homepage> {
       }
     });
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
-    // playlists.all().then((onValue){
-    //   for (var playlist in onValue) {
-    //     print(playlist.name);
-    //   }
-    // });
     // CursorPages<PlayHistory> history = spotify.me.recentlyPlayed();
     // history.all().then((onValue){
     //   for (var history in onValue) {
@@ -83,10 +77,6 @@ class _HomepageState extends State<Homepage> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Column(
         children: [
-          const Expanded(
-            flex: 1,
-            child: UpperBar(),
-          ),
 
           Expanded(
             flex: 8,
@@ -94,28 +84,18 @@ class _HomepageState extends State<Homepage> {
               children: [
                 // Left column
                 Expanded(
-                  flex: 1,
-                  child: Builder(builder: (context) {
-                    if (playlists == null) {
-                      return const DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0xFF121212)),
-                        child: SizedBox(
-                          height: double.infinity,
-                        ),
-                      );
-                    }
-                    return Leftbar(pages: playlists);
-                  }),
+                  flex: 2,
+                  child: Leftbar(pages: playlists),
                 ),
                 // Center body
                 const Expanded(
-                  flex: 5,
+                  flex: 8,
                   child: CenterMenu(),
                 ),
 
                 // Right column
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Builder(builder: (context) {
                     if (currentTrack == null) {
                       return const DecoratedBox(
