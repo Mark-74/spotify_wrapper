@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:spotify/spotify.dart';
 
 class Leftbar extends StatefulWidget {
-  const Leftbar({super.key});
+  final Pages? pages;
+  const Leftbar({super.key, required this.pages});
 
   @override
   State<Leftbar> createState() => _LeftbarState();
@@ -25,10 +27,7 @@ class _LeftbarState extends State<Leftbar> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: 15),
-                SizedBox(
-                  child: Icon(Icons.person, size: 100),
-                ),
+                SizedBox(child: Icon(Icons.account_balance)),
                 SizedBox(height: 15),
                 SizedBox(
                   child: Icon(Icons.person, size: 100),

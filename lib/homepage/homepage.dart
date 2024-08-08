@@ -31,6 +31,7 @@ class _HomepageState extends State<Homepage> {
   late AudioPlayer player = widget.player;
   Track? currentTrack;
   Duration? duration;
+  Pages? playlists;
 
   @override
   void dispose() {
@@ -61,7 +62,7 @@ class _HomepageState extends State<Homepage> {
         await player.play(UrlSource(audioUrl.toString()));
       }
     });
-    Pages playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
+    playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     // playlists.all().then((onValue){
     //   for (var playlist in onValue) {
     //     print(playlist.name);
@@ -92,9 +93,19 @@ class _HomepageState extends State<Homepage> {
             child: Row(
               children: [
                 // Left column
-                const Expanded(
+                Expanded(
                   flex: 1,
-                  child: Leftbar(),
+                  child: Builder(builder: (context) {
+                    if (playlists == null) {
+                      return const DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF121212)),
+                        child: SizedBox(
+                          height: double.infinity,
+                        ),
+                      );
+                    }
+                    return Leftbar(pages: playlists);
+                  }),
                 ),
                 // Center body
                 const Expanded(
@@ -105,11 +116,19 @@ class _HomepageState extends State<Homepage> {
                 // Right column
                 Expanded(
                   flex: 2,
-                  child:Builder(builder: (context) {
+                  child: Builder(builder: (context) {
                     if (currentTrack == null) {
-                      return const DecoratedBox(decoration: BoxDecoration(color: Color(0xFF121212)), child: SizedBox(height: double.infinity,),);
+                      return const DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF121212)),
+                        child: SizedBox(
+                          height: double.infinity,
+                        ),
+                      );
                     }
-                    return Rightbar(artist: currentTrack!.artists!.first.name!, songName: currentTrack!.name!, imageUrl:currentTrack!.album!.images!.first.url!);
+                    return Rightbar(
+                        artist: currentTrack!.artists!.first.name!,
+                        songName: currentTrack!.name!,
+                        imageUrl: currentTrack!.album!.images!.first.url!);
                   }),
                 ),
               ],
@@ -142,10 +161,10 @@ class _HomepageState extends State<Homepage> {
                                 IconButton(
                                   onPressed: () async {
                                     if (player.state == PlayerState.playing) {
-                                        await player.pause();
-                                      } else {
-                                        await player.resume();
-                                      }
+                                      await player.pause();
+                                    } else {
+                                      await player.resume();
+                                    }
                                   },
                                   icon: Icon(
                                     player.state == PlayerState.playing
