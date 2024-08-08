@@ -12,7 +12,6 @@ class Leftbar extends StatefulWidget {
 }
 
 class _LeftbarState extends State<Leftbar> {
-
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -37,16 +36,20 @@ class _LeftbarState extends State<Leftbar> {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-
-                      return Column(
-                        children: [
-                          for (var playlist in snapshot.data)
-                            ListTile(
-                              title: Text(playlist.name),
-                              leading: Image(image: NetworkImage(playlist.images!.first.url))
-                            ),
-                        ],
-                      );
+                      try {
+                        return Column(
+                          children: [
+                            for (var playlist in snapshot.data)
+                              ListTile(
+                                  title: Text(playlist.name),
+                                  leading: Image(
+                                      image: NetworkImage(
+                                          playlist.images!.first.url))),
+                          ],
+                        );
+                      } catch (e) {
+                        return const SizedBox();
+                      }
                     }
                   },
                 ),
