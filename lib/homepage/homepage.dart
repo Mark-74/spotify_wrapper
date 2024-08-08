@@ -1,7 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_wrapper/homepage/leftbar.dart';
 import 'package:spotify_wrapper/homepage/menu.dart';
@@ -61,6 +61,18 @@ class _HomepageState extends State<Homepage> {
         await player.play(UrlSource(audioUrl.toString()));
       }
     });
+    Pages playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
+    // playlists.all().then((onValue){
+    //   for (var playlist in onValue) {
+    //     print(playlist.name);
+    //   }
+    // });
+    // CursorPages<PlayHistory> history = spotify.me.recentlyPlayed();
+    // history.all().then((onValue){
+    //   for (var history in onValue) {
+    //     print(history.track!.name);
+    //   }
+    // });
     super.initState();
   }
 
@@ -69,7 +81,7 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Column(
-        children: <Widget>[
+        children: [
           const Expanded(
             flex: 1,
             child: UpperBar(),
@@ -78,7 +90,7 @@ class _HomepageState extends State<Homepage> {
           Expanded(
             flex: 8,
             child: Row(
-              children: <Widget>[
+              children: [
                 // Left column
                 const Expanded(
                   flex: 1,
