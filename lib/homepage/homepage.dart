@@ -16,6 +16,12 @@ Map<String, String> getCredentials() {
   };
 }
 
+class Updater with ChangeNotifier {
+  void notify() {
+    notifyListeners();
+  }
+}
+
 class Homepage extends StatefulWidget {
   Homepage({super.key});
 
@@ -27,6 +33,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  final Updater trackUpdater = Updater();
+  final Updater buttonUpdater = Updater();
   late AudioPlayer player = widget.player;
   Track? currentTrack;
   Duration? duration;
@@ -41,7 +49,8 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     player.onPlayerStateChanged.listen((event) {
-      setState(() {}); //TODO: update only bottom and right bar, not the whole page
+      if(event == PlayerState.playing) trackUpdater.notify();
+      buttonUpdater.notify();
     });
 
     final spotify = SpotifyApi(SpotifyApiCredentials(
@@ -77,7 +86,6 @@ class _HomepageState extends State<Homepage> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Column(
         children: [
-
           Expanded(
             flex: 8,
             child: Row(
@@ -96,20 +104,23 @@ class _HomepageState extends State<Homepage> {
                 // Right column
                 Expanded(
                   flex: 3,
-                  child: Builder(builder: (context) {
-                    if (currentTrack == null) {
-                      return const DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0xFF121212)),
-                        child: SizedBox(
-                          height: double.infinity,
-                        ),
-                      );
-                    }
-                    return Rightbar(
-                        artist: currentTrack!.artists!.first.name!,
-                        songName: currentTrack!.name!,
-                        imageUrl: currentTrack!.album!.images!.first.url!);
-                  }),
+                  child: ListenableBuilder(
+                    listenable: trackUpdater,
+                    builder: (context, child) {
+                      if (currentTrack == null) {
+                        return const DecoratedBox(
+                          decoration: BoxDecoration(color: Color(0xFF121212)),
+                          child: SizedBox(
+                            height: double.infinity,
+                          ),
+                        );
+                      }
+                      return Rightbar(
+                          artist: currentTrack!.artists!.first.name!,
+                          songName: currentTrack!.name!,
+                          imageUrl: currentTrack!.album!.images!.first.url!);
+                    },
+                  ),
                 ),
               ],
             ),
@@ -127,42 +138,47 @@ class _HomepageState extends State<Homepage> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.skip_previous,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    if (player.state == PlayerState.playing) {
-                                      await player.pause();
-                                    } else {
-                                      await player.resume();
-                                    }
-                                  },
-                                  icon: Icon(
-                                    player.state == PlayerState.playing
-                                        ? Icons.pause
-                                        : Icons.play_circle_filled,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.skip_next,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
-                                ),
-                              ],
+                            child: ListenableBuilder(
+                              listenable: buttonUpdater,
+                              builder: (context, child) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                        Icons.skip_previous,
+                                        color: Colors.white,
+                                        size: 50,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        if (player.state == PlayerState.playing) {
+                                          await player.pause();
+                                        } else {
+                                          await player.resume();
+                                        }
+                                      },
+                                      icon: Icon(
+                                        player.state == PlayerState.playing
+                                            ? Icons.pause
+                                            : Icons.play_circle_filled,
+                                        color: Colors.white,
+                                        size: 50,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                        Icons.skip_next,
+                                        color: Colors.white,
+                                        size: 50,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
                             ),
                           ),
                           StreamBuilder(
