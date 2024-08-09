@@ -14,17 +14,23 @@ class _CenterMenuState extends State<CenterMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
+        body: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
-            Text(
-              "Playlists",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Recently played",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(
@@ -33,15 +39,130 @@ class _CenterMenuState extends State<CenterMenu> {
                 scrollDirection: Axis.horizontal,
                 children: List.generate(10, (index) {
                   return Container(
-                    width: 150.0,
-                    height: 100,
                     margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    color: Colors.black,
+                    child: const Icon(
+                      Icons.person,
+                      size: 150,
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Your favourite artists",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 150,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Icon(
+                      Icons.person,
+                      size: 150,
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Liked songs",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 150,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Icon(
+                      Icons.person,
+                      size: 150,
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 150,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Icon(
+                      Icons.person,
+                      size: 150,
+                    ),
+                  );
+                }),
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 150,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Icon(
+                      Icons.person,
+                      size: 150,
+                    ),
                   );
                 }),
               ),
             ),
           ],
-        ));
+        ),
+      ),
+    ));
   }
 }
