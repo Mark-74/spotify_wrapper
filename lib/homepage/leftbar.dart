@@ -39,12 +39,23 @@ class _LeftbarState extends State<Leftbar> {
                       try {
                         return Column(
                           children: [
+                            const Text('Playlists',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             for (var playlist in snapshot.data)
-                              ListTile(
-                                  title: Text(playlist.name),
-                                  leading: Image(
-                                      image: NetworkImage(
-                                          playlist.images!.first.url))),
+                              Column(children: [
+                                const SizedBox(height: 15),
+                                ListTile(
+                                    title: Text(playlist.name),
+                                    leading: Image(
+                                        image: NetworkImage(
+                                            playlist.images!.first.url))),
+                              ])
                           ],
                         );
                       } catch (e) {

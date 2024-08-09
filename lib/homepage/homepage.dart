@@ -71,12 +71,7 @@ class _HomepageState extends State<Homepage> {
       }
     });
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
-    // CursorPages<PlayHistory> history = spotify.me.recentlyPlayed();
-    // history.all().then((onValue){
-    //   for (var history in onValue) {
-    //     print(history.track!.name);
-    //   }
-    // });
+    CursorPages<PlayHistory> history = spotify.me.recentlyPlayed();
     super.initState();
   }
 
