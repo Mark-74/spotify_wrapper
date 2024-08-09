@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/homepage.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:spotify_wrapper/connect.dart';
 //import 'package:spotify_wrapper/test.dart';
 
 class MyWindowListener extends WindowListener{
@@ -19,7 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowManager.instance.setTitle('Spotify Wrapper');
-  WindowManager.instance.setMinimumSize(const Size(900, 800));
+  WindowManager.instance.setMinimumSize(const Size(1000, 800));
   WindowManager.instance.addListener(MyWindowListener());
   
   //end window settings
@@ -60,6 +61,7 @@ class _SpotifyWrapperAppState extends State<SpotifyWrapperApp> {
     return MaterialApp(
         theme: ThemeData.dark(),
         initialRoute: '/',
-        routes: {'/': (context) => Homepage()});
+        routes: {'/': (context) => Homepage(),
+        '/connect' : (context) => const Connect()});
   }
 }

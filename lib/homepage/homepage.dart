@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +10,7 @@ import 'package:spotify_wrapper/homepage/menu.dart';
 import 'package:spotify_wrapper/homepage/rightbar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:oauth2/oauth2.dart';
 
 Map<String, String> getCredentials() {
   return {
@@ -53,8 +56,7 @@ class _HomepageState extends State<Homepage> {
       buttonUpdater.notify();
     });
 
-    final spotify = SpotifyApi(SpotifyApiCredentials(
-        widget.credentials['client_id'], widget.credentials['client_secret']));
+    final spotify = SpotifyApi(SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
     spotify.tracks
         .get('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da')
         .then((track) async {
