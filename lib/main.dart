@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/homepage.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:spotify_wrapper/connect.dart';
+import 'package:spotify/spotify.dart';
+import  'package:flutter_secure_storage/flutter_secure_storage.dart';
 //import 'package:spotify_wrapper/test.dart';
 
 class MyWindowListener extends WindowListener{
@@ -12,6 +14,8 @@ class MyWindowListener extends WindowListener{
     current.width < 900 || current.height < 800 ? WindowManager.instance.setMinimumSize(const Size(900, 800)): null;
   }
 }
+
+SpotifyApiCredentials? credentials;
 
 void main() async {
 
@@ -24,6 +28,13 @@ void main() async {
   WindowManager.instance.addListener(MyWindowListener());
   
   //end window settings
+
+  const storage = FlutterSecureStorage();
+  String creds = (await storage.read(key: 'credentials'))!;
+  var splitted = creds.split('#');
+  splitted[4].replaceAll('[', '');
+  splitted[4].replaceAll(']', '');
+  credentials = SpotifyApiCredentials(splitted[0], splitted[1], accessToken: splitted[2], refreshToken: splitted[3], scopes: splitted[4].split(','), expiration: DateTime.parse(splitted[5]));
 
   try {
     await dotenv.load(fileName: '.env');
@@ -61,7 +72,7 @@ class _SpotifyWrapperAppState extends State<SpotifyWrapperApp> {
     return MaterialApp(
         theme: ThemeData.dark(),
         initialRoute: '/',
-        routes: {'/': (context) => Homepage(),
+        routes: {'/': (context) => Homepage(creds: credentials!,),
         '/connect' : (context) => const Connect()});
   }
 }

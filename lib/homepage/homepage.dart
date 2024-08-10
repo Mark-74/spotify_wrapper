@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:spotify_wrapper/homepage/updater.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_wrapper/homepage/leftbar.dart';
 import 'package:spotify_wrapper/homepage/menu.dart';
@@ -19,15 +19,10 @@ Map<String, String> getCredentials() {
   };
 }
 
-class Updater with ChangeNotifier {
-  void notify() {
-    notifyListeners();
-  }
-}
-
 class Homepage extends StatefulWidget {
-  Homepage({super.key});
+  Homepage({super.key, required this.creds});
 
+  final SpotifyApiCredentials creds;
   final Map<String, String> credentials = getCredentials();
   final player = AudioPlayer();
 
@@ -36,6 +31,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  CursorPages<PlayHistory>? history;
   final Updater trackUpdater = Updater();
   final Updater buttonUpdater = Updater();
   late AudioPlayer player = widget.player;
@@ -56,7 +52,7 @@ class _HomepageState extends State<Homepage> {
       buttonUpdater.notify();
     });
 
-    final spotify = SpotifyApi(SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
+    final spotify = SpotifyApi(widget.creds);
     spotify.tracks
         .get('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da')
         .then((track) async {
@@ -73,7 +69,7 @@ class _HomepageState extends State<Homepage> {
       }
     });
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
-    CursorPages<PlayHistory> history = spotify.me.recentlyPlayed();
+    history = spotify.me.recentlyPlayed();
     super.initState();
   }
 
@@ -93,9 +89,9 @@ class _HomepageState extends State<Homepage> {
                   child: Leftbar(pages: playlists),
                 ),
                 // Center body
-                const Expanded(
+                Expanded(
                   flex: 8,
-                  child: CenterMenu(),
+                  child: CenterMenu(playHistory: history!)
                 ),
 
                 // Right column

@@ -31,7 +31,7 @@ class _ConnectState extends State<Connect> {
           Center(
             child: TextButton(onPressed: () async{
               auth = SpotifyApi.authorizationCodeGrant(SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
-              response = auth!.getAuthorizationUrl(Uri.parse('https://54af-93-44-124-146.ngrok-free.app/callback'), scopes: ['user-read-playback-state', 'user-read-recently-played', 'user-read-currently-playing', 'user-modify-playback-state']);
+              response = auth!.getAuthorizationUrl(Uri.parse('https://71b4-93-44-124-146.ngrok-free.app/callback'), scopes: ['user-read-playback-state', 'user-read-recently-played', 'user-read-currently-playing', 'user-modify-playback-state']);
               print(response.toString());
               trackUpdater.notify();
             }, child: const Text('connect')),
