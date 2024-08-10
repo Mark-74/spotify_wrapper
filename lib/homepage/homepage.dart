@@ -31,6 +31,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  Pages<Artist>? topArtists;
+  Pages<Track>? topTracks;
   CursorPages<PlayHistory>? history;
   final Updater trackUpdater = Updater();
   final Updater buttonUpdater = Updater();
@@ -70,6 +72,8 @@ class _HomepageState extends State<Homepage> {
     });
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     history = spotify.me.recentlyPlayed();
+    topArtists = spotify.me.topArtists();
+    topTracks = spotify.me.topTracks();
     super.initState();
   }
 
@@ -91,7 +95,7 @@ class _HomepageState extends State<Homepage> {
                 // Center body
                 Expanded(
                   flex: 8,
-                  child: CenterMenu(playHistory: history!)
+                  child: CenterMenu(playHistory: history!, topArtists: topArtists!, topTracks: topTracks!,),
                 ),
 
                 // Right column

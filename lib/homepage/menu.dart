@@ -7,16 +7,68 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/updater.dart';
 import 'package:spotify/spotify.dart' as sp;
 
-Future<List<Container>> convert(sp.CursorPages<sp.PlayHistory> history) async {
+Future<List<Container>> convertRecentTracks(sp.CursorPages<sp.PlayHistory> history) async {
   final spotify = sp.SpotifyApi(sp.SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
   var result = await history.all();
   List<Container> list = [];
   for(var element in result) {
     sp.Track currentTrack = await spotify.tracks.get(element.track!.id!);
     list.add(Container(
-      child: Image(
-        image: NetworkImage(currentTrack.album!.images!.first.url!),
-        height: 150,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Image(
+              image: NetworkImage(currentTrack.album!.images!.first.url!),
+              height: 150,
+            ),
+            Text(currentTrack.name!),
+          ],
+        ),
+      ),
+    ));
+  }
+  return list;
+}
+
+Future<List<Container>> convertArtists(sp.Pages<sp.Artist> artists) async {
+  var result = await artists.all();
+  List<Container> list = [];
+  for(var element in result) {
+    list.add(Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Image(
+              image: NetworkImage(element.images!.first.url!),
+              height: 150,
+            ),
+            Text(element.name!),
+          ],
+        ),
+      ),
+    ));
+  }
+  return list;
+}
+
+Future<List<Container>> convertTracks(sp.Pages<sp.Track> topTracks) async {
+  var result = await topTracks.all(30);
+  List<Container> list = [];
+  for(var element in result) {
+    list.add(Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Image(
+              image: NetworkImage(element.album!.images!.first.url!),
+              height: 150,
+            ),
+            Text(element.name!),
+          ],
+        ),
       ),
     ));
   }
@@ -25,7 +77,9 @@ Future<List<Container>> convert(sp.CursorPages<sp.PlayHistory> history) async {
 
 class CenterMenu extends StatefulWidget {
   final sp.CursorPages<sp.PlayHistory> playHistory;
-  const CenterMenu({super.key, required this.playHistory});
+  final sp.Pages<sp.Artist> topArtists;
+  final sp.Pages<sp.Track> topTracks;
+  const CenterMenu({super.key, required this.playHistory, required this.topArtists, required this.topTracks});
 
   @override
   State<CenterMenu> createState() => _CenterMenuState();
@@ -74,9 +128,9 @@ class _CenterMenuState extends State<CenterMenu> {
               ),
             ),
             SizedBox(
-              height: 150,
+              height: 200,
               child: FutureBuilder(
-                  future: convert(widget.playHistory),
+                  future: convertRecentTracks(widget.playHistory),
                   builder: (context, child) {
                     if (child.hasData) {
                       return ListView.builder(
@@ -105,19 +159,22 @@ class _CenterMenuState extends State<CenterMenu> {
               ),
             ),
             SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: const Icon(
-                      Icons.person,
-                      size: 150,
-                    ),
-                  );
-                }),
-              ),
+              height: 200,
+              child: FutureBuilder(
+                  future: convertArtists(widget.topArtists),
+                  builder: (context, child) {
+                    if(child.hasData){
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: child.data!.length,
+                        itemBuilder: (context, index) {
+                          return child.data![index];
+                        },
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  }),
             ),
             const SizedBox(
               height: 40,
@@ -125,7 +182,7 @@ class _CenterMenuState extends State<CenterMenu> {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                "Liked songs",
+                "Your top songs",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -133,75 +190,25 @@ class _CenterMenuState extends State<CenterMenu> {
               ),
             ),
             SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: const Icon(
-                      Icons.person,
-                      size: 150,
-                    ),
-                  );
-                }),
-              ),
+              height: 200,
+              child: FutureBuilder(
+                  future: convertTracks(widget.topTracks),
+                  builder: (context, child) {
+                    if(child.hasData){
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: child.data!.length,
+                        itemBuilder: (context, index) {
+                          return child.data![index];
+                        },
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  }),
             ),
             const SizedBox(
               height: 40,
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: const Icon(
-                      Icons.person,
-                      size: 150,
-                    ),
-                  );
-                }),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: const Icon(
-                      Icons.person,
-                      size: 150,
-                    ),
-                  );
-                }),
-              ),
             ),
           ],
         ),
