@@ -11,6 +11,8 @@ class CenterMenu extends StatefulWidget {
 }
 
 class _CenterMenuState extends State<CenterMenu> {
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +22,23 @@ class _CenterMenuState extends State<CenterMenu> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //Search bar
+            Center(
+              child: SizedBox(
+                width: 600,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: ' 🔍 Search your songs',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    hintStyle: const TextStyle(color: Colors.white54),
+                  ),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ),
             const SizedBox(
               height: 40,
             ),
@@ -84,7 +103,7 @@ class _CenterMenuState extends State<CenterMenu> {
               child: Text(
                 "Liked songs",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
