@@ -141,7 +141,7 @@ class _CenterMenuState extends State<CenterMenu> {
                         },
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return const SizedBox();
                     }
                   }),
             ),
@@ -172,7 +172,7 @@ class _CenterMenuState extends State<CenterMenu> {
                         },
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return const SizedBox();
                     }
                   }),
             ),
@@ -203,7 +203,7 @@ class _CenterMenuState extends State<CenterMenu> {
                         },
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return const SizedBox();
                     }
                   }),
             ),
