@@ -4,7 +4,8 @@ import 'package:spotify_wrapper/homepage/updater.dart';
 import 'package:spotify/spotify.dart' hide Image;
 
 class Searchpage extends StatefulWidget {
-  const Searchpage({super.key});
+  final PlayerNotifier playerNotifier;
+  const Searchpage({super.key, required this.playerNotifier});
 
   @override
   State<Searchpage> createState() => _SearchPageState();
@@ -38,7 +39,19 @@ class _SearchPageState extends State<Searchpage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Image.network(track.album?.images?.first.url ?? ''),
+                  IconButton(
+                    icon: Image(
+                        image:
+                            NetworkImage(track.album?.images?.first.url ?? ''),
+                        height: 190),
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onPressed: () {
+                      widget.playerNotifier
+                          .notify(track.id!, track.artists!.first.name!);
+                    },
+                  ),
                   Text(track.name!),
                 ],
               ),

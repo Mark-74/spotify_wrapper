@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:spotify_wrapper/homepage/menu.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/updater.dart';
+import 'package:spotify_wrapper/homepage/searchpage.dart';
 import 'package:spotify/spotify.dart' as sp;
 
 Future<List<Container>> convertRecentTracks(sp.CursorPages<sp.PlayHistory> history, PlayerNotifier pn) async {
@@ -125,6 +126,7 @@ class _CenterMenuState extends State<CenterMenu> {
                     hintStyle: const TextStyle(color: Colors.white54),
                   ),
                   style: const TextStyle(color: Colors.white, fontSize: 18),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Searchpage(playerNotifier: widget.trackUpdater,))),
                 ),
               ),
             ),
