@@ -11,7 +11,7 @@ class MyWindowListener extends WindowListener{
   @override
   void onWindowResize() async {
     Size current = await WindowManager.instance.getSize();
-    current.width < 900 || current.height < 800 ? WindowManager.instance.setMinimumSize(const Size(900, 800)): null;
+    current.width < 1000 || current.height < 800 ? WindowManager.instance.setMinimumSize(const Size(1000, 800)): null;
   }
 }
 

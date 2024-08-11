@@ -28,17 +28,24 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 return ListView.builder(
                     itemCount: snapshot.data != null ? snapshot.data!.length : 0,
                     itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                            title: Text(snapshot.data!.elementAt(index).name!),
-                            leading: Image(
-                                image: NetworkImage(
-                                    snapshot.data!.elementAt(index).album!.images!.first.url!)),
-                            onTap: () {
-                                widget.updater.notify(
-                                    snapshot.data!.elementAt(index).id!,
-                                    snapshot.data!.elementAt(index).artists!.first.name!,
-                                );
-                            },
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                              title: Text(snapshot.data!.elementAt(index).name!),
+                              // ignore: sized_box_for_whitespace
+                              leading: Container(
+                                height: double.infinity,
+                                child: Image(
+                                    image: NetworkImage(
+                                        snapshot.data!.elementAt(index).album!.images!.first.url!)),
+                              ),
+                              onTap: () {
+                                  widget.updater.notify(
+                                      snapshot.data!.elementAt(index).id!,
+                                      snapshot.data!.elementAt(index).artists!.first.name!,
+                                  );
+                              },
+                          ),
                         );
                     },
                 );

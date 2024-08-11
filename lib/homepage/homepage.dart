@@ -43,7 +43,7 @@ class _HomepageState extends State<Homepage> {
   Pages? playlists;
   final PlayerNotifier playerNotifier = PlayerNotifier();
 
-  void playSong(String songId, String artistName) async {
+  void playSong(String songId, String artistName, {bool stop = false}) async {
     if (player.state == PlayerState.playing) await player.stop();
 
     Track track;
@@ -62,6 +62,7 @@ class _HomepageState extends State<Homepage> {
       var manifest = await yt.videos.streamsClient.getManifest(videoId);
       var audioUrl = manifest.audioOnly.first.url;
       await player.play(UrlSource(audioUrl.toString()));
+      if(stop) await player.pause();
     }
   }
 
@@ -82,7 +83,7 @@ class _HomepageState extends State<Homepage> {
       buttonUpdater.notify();
     });
 
-    playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da', 'linkin park');
+    playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da', 'linkin park', stop: true);
 
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     history = spotify.me.recentlyPlayed();
