@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spotify/spotify.dart' as spotify;
+import 'package:spotify_wrapper/homepage/playlistpage.dart';
+import 'package:spotify_wrapper/homepage/updater.dart';
 
 class Leftbar extends StatefulWidget {
   final spotify.Pages? pages;
-  const Leftbar({super.key, required this.pages});
+  final PlayerNotifier updater;
+  const Leftbar({super.key, required this.pages, required this.updater});
 
   @override
   State<Leftbar> createState() => _LeftbarState();
@@ -54,7 +57,10 @@ class _LeftbarState extends State<Leftbar> {
                                     title: Text(playlist.name),
                                     leading: Image(
                                         image: NetworkImage(
-                                            playlist.images!.first.url))),
+                                            playlist.images!.first.url)),
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistPage(playlist: playlist, updater: widget.updater)));
+                                        },),
                               ])
                           ],
                         );

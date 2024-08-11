@@ -104,7 +104,7 @@ class _HomepageState extends State<Homepage> {
                 // Left column
                 Expanded(
                   flex: 2,
-                  child: Leftbar(pages: playlists),
+                  child: Leftbar(pages: playlists, updater: playerNotifier),
                 ),
                 // Center body
                 Expanded(
