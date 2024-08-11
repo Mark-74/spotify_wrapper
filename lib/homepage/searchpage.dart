@@ -67,19 +67,12 @@ class _SearchPageState extends State<Searchpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          Row(
-            children: [
-              Center(
-                child: SearchBar(
+        title: SearchBar(
                   controller: _searchController,
                   hintText: ' 🔍 Search your songs',
                   onChanged: searchTracks,
                 ),
-              ),
-            ],
-          )
-        ],
+        centerTitle: true,
       ),
       body: Column(
         children: [

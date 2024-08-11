@@ -85,6 +85,7 @@ class _HomepageState extends State<Homepage> {
 
     //tribute
     playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da', 'linkin park', stop: true);
+    playerNotifier.updatePreviousSongs('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da', 'linkin park');  
 
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     history = spotify.me.recentlyPlayed();
@@ -164,7 +165,14 @@ class _HomepageState extends State<Homepage> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          String? previous = playerNotifier.getPreviousSong();
+                                          if(previous != null){
+                                            String previousSongId = previous.split(',')[0];
+                                            String previousArtistName = previous.split(',')[1];
+                                            playerNotifier.notify(previousSongId, previousArtistName);
+                                          }
+                                        },
                                         icon: const Icon(
                                           Icons.skip_previous,
                                           color: Colors.white,
@@ -189,7 +197,14 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          String? next = playerNotifier.getnextSong();
+                                          if(next != null){
+                                            String nextSongId = next.split(',')[0];
+                                            String nextArtistName = next.split(',')[1];
+                                            playerNotifier.notify(nextSongId, nextArtistName);
+                                          }
+                                        },
                                         icon: const Icon(
                                           Icons.skip_next,
                                           color: Colors.white,
