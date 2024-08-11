@@ -66,21 +66,23 @@ class _SearchPageState extends State<Searchpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-              child: SizedBox(
-                width: 600,
+      appBar: AppBar(
+        actions: [
+          Row(
+            children: [
+              Center(
                 child: SearchBar(
                   controller: _searchController,
                   hintText: ' 🔍 Search your songs',
                   onChanged: searchTracks,
                 ),
               ),
-            ),
-          ),
+            ],
+          )
+        ],
+      ),
+      body: Column(
+        children: [
           const SizedBox(height: 50),
           Expanded(
             child: Padding(
