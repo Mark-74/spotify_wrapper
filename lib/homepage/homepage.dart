@@ -41,8 +41,9 @@ class _HomepageState extends State<Homepage> {
   Track? currentTrack;
   Duration? duration;
   Pages? playlists;
+  final PlayerNotifier playerNotifier = PlayerNotifier();
 
-  void playSong(String songId) async {
+  void playSong(String songId, String artistName) async {
     if (player.state == PlayerState.playing) await player.stop();
 
     Track track;
@@ -55,7 +56,7 @@ class _HomepageState extends State<Homepage> {
     if (songName != null) {
       currentTrack = track;
       final yt = YoutubeExplode();
-      final video = (await yt.search.search(songName)).first;
+      final video = (await yt.search.search(songName, filter: SearchFilter(artistName))).first;
       final videoId = video.id.value;
       duration = video.duration;
       var manifest = await yt.videos.streamsClient.getManifest(videoId);
@@ -72,12 +73,16 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+    playerNotifier.addListener(() {
+      playSong(playerNotifier.currentSongId!, playerNotifier.currentArtistName!);
+    });
+
     player.onPlayerStateChanged.listen((event) {
       if (event == PlayerState.playing) trackUpdater.notify();
       buttonUpdater.notify();
     });
 
-    playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da');
+    playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da', 'linkin park');
 
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     history = spotify.me.recentlyPlayed();
@@ -108,6 +113,7 @@ class _HomepageState extends State<Homepage> {
                     playHistory: history!,
                     topArtists: topArtists!,
                     topTracks: topTracks!,
+                    trackUpdater: playerNotifier,
                   ),
                 ),
 

@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/updater.dart';
 import 'package:spotify/spotify.dart' as sp;
 
-Future<List<Container>> convertRecentTracks(sp.CursorPages<sp.PlayHistory> history) async {
+Future<List<Container>> convertRecentTracks(sp.CursorPages<sp.PlayHistory> history, PlayerNotifier pn) async {
   final spotify = sp.SpotifyApi(sp.SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
   var result = await history.all();
   List<Container> list = [];
@@ -18,10 +18,18 @@ Future<List<Container>> convertRecentTracks(sp.CursorPages<sp.PlayHistory> histo
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Image(
+            IconButton(
+              icon: Image(
               image: NetworkImage(currentTrack.album!.images!.first.url!),
-              height: 150,
-            ),
+              height: 148,
+            ), 
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onPressed: () {
+                pn.notify(currentTrack.id!, currentTrack.artists!.first.name!);
+              },),
+            
             Text(currentTrack.name!),
           ],
         ),
@@ -53,7 +61,7 @@ Future<List<Container>> convertArtists(sp.Pages<sp.Artist> artists) async {
   return list;
 }
 
-Future<List<Container>> convertTracks(sp.Pages<sp.Track> topTracks) async {
+Future<List<Container>> convertTracks(sp.Pages<sp.Track> topTracks, PlayerNotifier pn) async {
   var result = await topTracks.all(30);
   List<Container> list = [];
   for(var element in result) {
@@ -62,9 +70,14 @@ Future<List<Container>> convertTracks(sp.Pages<sp.Track> topTracks) async {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Image(
-              image: NetworkImage(element.album!.images!.first.url!),
-              height: 150,
+            IconButton(
+              icon: Image(image: NetworkImage(element.album!.images!.first.url!), height: 148,),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              onPressed: () {
+                pn.notify(element.id!, element.artists!.first.name!);
+              },
             ),
             Text(element.name!),
           ],
@@ -79,7 +92,8 @@ class CenterMenu extends StatefulWidget {
   final sp.CursorPages<sp.PlayHistory> playHistory;
   final sp.Pages<sp.Artist> topArtists;
   final sp.Pages<sp.Track> topTracks;
-  const CenterMenu({super.key, required this.playHistory, required this.topArtists, required this.topTracks});
+  final PlayerNotifier trackUpdater;
+  const CenterMenu({super.key, required this.playHistory, required this.topArtists, required this.topTracks, required this.trackUpdater});
 
   @override
   State<CenterMenu> createState() => _CenterMenuState();
@@ -130,7 +144,7 @@ class _CenterMenuState extends State<CenterMenu> {
             SizedBox(
               height: 200,
               child: FutureBuilder(
-                  future: convertRecentTracks(widget.playHistory),
+                  future: convertRecentTracks(widget.playHistory, widget.trackUpdater),
                   builder: (context, child) {
                     if (child.hasData) {
                       return ListView.builder(
@@ -192,7 +206,7 @@ class _CenterMenuState extends State<CenterMenu> {
             SizedBox(
               height: 200,
               child: FutureBuilder(
-                  future: convertTracks(widget.topTracks),
+                  future: convertTracks(widget.topTracks, widget.trackUpdater),
                   builder: (context, child) {
                     if(child.hasData){
                       return ListView.builder(
