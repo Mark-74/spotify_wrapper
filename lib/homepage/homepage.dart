@@ -37,9 +37,32 @@ class _HomepageState extends State<Homepage> {
   final Updater trackUpdater = Updater();
   final Updater buttonUpdater = Updater();
   late AudioPlayer player = widget.player;
+  late SpotifyApi spotify = SpotifyApi(widget.creds);
   Track? currentTrack;
   Duration? duration;
   Pages? playlists;
+
+  void playSong(String songId) async {
+    if (player.state == PlayerState.playing) await player.stop();
+
+    Track track;
+    try{
+          track = await spotify.tracks.get(songId);
+    } catch (e) {
+          track = await spotify.tracks.get(songId);
+    }
+    String? songName = track.name;
+    if (songName != null) {
+      currentTrack = track;
+      final yt = YoutubeExplode();
+      final video = (await yt.search.search(songName)).first;
+      final videoId = video.id.value;
+      duration = video.duration;
+      var manifest = await yt.videos.streamsClient.getManifest(videoId);
+      var audioUrl = manifest.audioOnly.first.url;
+      await player.play(UrlSource(audioUrl.toString()));
+    }
+  }
 
   @override
   void dispose() {
@@ -50,26 +73,12 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     player.onPlayerStateChanged.listen((event) {
-      if(event == PlayerState.playing) trackUpdater.notify();
+      if (event == PlayerState.playing) trackUpdater.notify();
       buttonUpdater.notify();
     });
 
-    final spotify = SpotifyApi(widget.creds);
-    spotify.tracks
-        .get('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da')
-        .then((track) async {
-      String? songName = track.name;
-      if (songName != null) {
-        currentTrack = track;
-        final yt = YoutubeExplode();
-        final video = (await yt.search.search(songName)).first;
-        final videoId = video.id.value;
-        duration = video.duration;
-        var manifest = await yt.videos.streamsClient.getManifest(videoId);
-        var audioUrl = manifest.audioOnly.first.url;
-        await player.play(UrlSource(audioUrl.toString()));
-      }
-    });
+    playSong('18lR4BzEs7e3qzc0KVkTpU?si=27d68fc2c2dd40da');
+
     playlists = spotify.playlists.getUsersPlaylists(dotenv.get('USER_ID'));
     history = spotify.me.recentlyPlayed();
     topArtists = spotify.me.topArtists();
@@ -95,7 +104,11 @@ class _HomepageState extends State<Homepage> {
                 // Center body
                 Expanded(
                   flex: 8,
-                  child: CenterMenu(playHistory: history!, topArtists: topArtists!, topTracks: topTracks!,),
+                  child: CenterMenu(
+                    playHistory: history!,
+                    topArtists: topArtists!,
+                    topTracks: topTracks!,
+                  ),
                 ),
 
                 // Right column
@@ -136,47 +149,48 @@ class _HomepageState extends State<Homepage> {
                         children: [
                           Expanded(
                             child: ListenableBuilder(
-                              listenable: buttonUpdater,
-                              builder: (context, child) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.skip_previous,
-                                        color: Colors.white,
-                                        size: 50,
+                                listenable: buttonUpdater,
+                                builder: (context, child) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.skip_previous,
+                                          color: Colors.white,
+                                          size: 50,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        if (player.state == PlayerState.playing) {
-                                          await player.pause();
-                                        } else {
-                                          await player.resume();
-                                        }
-                                      },
-                                      icon: Icon(
-                                        player.state == PlayerState.playing
-                                            ? Icons.pause
-                                            : Icons.play_circle_filled,
-                                        color: Colors.white,
-                                        size: 50,
+                                      IconButton(
+                                        onPressed: () async {
+                                          if (player.state ==
+                                              PlayerState.playing) {
+                                            await player.pause();
+                                          } else {
+                                            await player.resume();
+                                          }
+                                        },
+                                        icon: Icon(
+                                          player.state == PlayerState.playing
+                                              ? Icons.pause
+                                              : Icons.play_circle_filled,
+                                          color: Colors.white,
+                                          size: 50,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.skip_next,
-                                        color: Colors.white,
-                                        size: 50,
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.skip_next,
+                                          color: Colors.white,
+                                          size: 50,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }
-                            ),
+                                    ],
+                                  );
+                                }),
                           ),
                           StreamBuilder(
                               stream: player.onPositionChanged,
