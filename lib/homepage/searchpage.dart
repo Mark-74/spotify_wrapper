@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:spotify_wrapper/homepage/updater.dart';
 import 'package:spotify/spotify.dart' hide Image;
@@ -39,20 +40,24 @@ class _SearchPageState extends State<Searchpage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  IconButton(
-                    icon: Image(
-                        image:
-                            NetworkImage(track.album?.images?.first.url ?? ''),
-                        height: 190),
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    onPressed: () {
-                      widget.playerNotifier
-                          .notify(track.id!, track.artists!.first.name!);
-                    },
+                  Expanded(
+                    child: Image.network(
+                      track.album?.images?.first.url ?? '',
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  Text(track.name!),
+                  const SizedBox(height: 5),
+                  Flexible(
+                    child: Text(
+                      track.name!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 2,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -66,16 +71,21 @@ class _SearchPageState extends State<Searchpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: SearchBar(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Center(
+              child: SizedBox(
+                width: 600,
+                child: SearchBar(
                   controller: _searchController,
                   hintText: ' 🔍 Search your songs',
                   onChanged: searchTracks,
                 ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
+              ),
+            ),
+          ),
           const SizedBox(height: 50),
           Expanded(
             child: Padding(
@@ -91,8 +101,9 @@ class _SearchPageState extends State<Searchpage> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 5,
-                            crossAxisSpacing: 20.0,
-                            mainAxisSpacing: 20.0,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
                           ),
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
