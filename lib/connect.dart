@@ -3,6 +3,7 @@ import 'package:spotify/spotify.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:spotify_wrapper/homepage/homepage.dart';
 
 class Connect extends StatefulWidget {
   const Connect({super.key});
@@ -18,26 +19,29 @@ class Updater with ChangeNotifier {
 }
 
 class _ConnectState extends State<Connect> {
-  final Updater trackUpdater = Updater();
+  final Updater submitUpdater = Updater();
   AuthorizationCodeGrant? auth;
   Uri? response;
   TextEditingController controller = TextEditingController();
+  TextEditingController redirectUriController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
       body: Column(
         children: [
+          TextField(
+            controller: redirectUriController,
+          ),
           Center(
             child: TextButton(onPressed: () async{
               auth = SpotifyApi.authorizationCodeGrant(SpotifyApiCredentials(dotenv.get('CLIENT_ID'), dotenv.get('CLIENT_SECRET')));
-              response = auth!.getAuthorizationUrl(Uri.parse('https://9d0e-93-44-124-146.ngrok-free.app/callback'), scopes: ['user-read-playback-state', 'user-read-recently-played', 'user-read-currently-playing', 'user-modify-playback-state', 'user-follow-read', 'user-top-read']);
-              print(response.toString());
-              trackUpdater.notify();
+              response = auth!.getAuthorizationUrl(Uri.parse(redirectUriController.text), scopes: ['user-read-playback-state', 'user-read-recently-played', 'user-read-currently-playing', 'user-modify-playback-state', 'user-follow-read', 'user-top-read']);
+              submitUpdater.notify();
             }, child: const Text('connect')),
           ),
-          ListenableBuilder(listenable: trackUpdater, builder: (context, child){
-            return Text(response.toString());
+          ListenableBuilder(listenable: submitUpdater, builder: (context, child){
+            return SelectableText(response.toString());
           }),
           TextField(
             controller: controller,
@@ -49,7 +53,8 @@ class _ConnectState extends State<Connect> {
               final creds = await spotify.getCredentials();
               var storage = const FlutterSecureStorage();
               await storage.write(key: 'credentials', value: "${creds.clientId}#${creds.clientSecret}#${creds.accessToken}#${creds.refreshToken}#${creds.scopes.toString()}#${creds.expiration}");
-              print(await storage.read(key: 'credentials'));
+              
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage(creds: creds)));
             },
             child: const Text('submit'),
           )

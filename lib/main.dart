@@ -29,13 +29,6 @@ void main() async {
   
   //end window settings
 
-  const storage = FlutterSecureStorage();
-  String creds = (await storage.read(key: 'credentials'))!;
-  var splitted = creds.split('#');
-  splitted[4].replaceAll('[', '');
-  splitted[4].replaceAll(']', '');
-  credentials = SpotifyApiCredentials(splitted[0], splitted[1], accessToken: splitted[2], refreshToken: splitted[3], scopes: splitted[4].split(','), expiration: DateTime.parse(splitted[5]));
-
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
@@ -71,8 +64,7 @@ class _SpotifyWrapperAppState extends State<SpotifyWrapperApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData.dark(),
-        initialRoute: '/',
-        routes: {'/': (context) => Homepage(creds: credentials!,),
-        '/connect' : (context) => const Connect()});
+        home: const Connect()
+    );
   }
 }
