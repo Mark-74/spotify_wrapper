@@ -41,10 +41,19 @@ class _SearchPageState extends State<Searchpage> {
               child: Column(
                 children: [
                   Expanded(
-                    child: Image.network(
-                      track.album?.images?.first.url ?? '',
-                      fit: BoxFit.cover,
-                    ),
+                    child: IconButton(
+                        onPressed: () {
+                          widget.playerNotifier
+                              .notify(track.id!, track.artists!.first.name!);
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        icon: Image(
+                          image: NetworkImage(
+                              track.album?.images?.first.url ?? ''),
+                          fit: BoxFit.cover,
+                        )),
                   ),
                   const SizedBox(height: 5),
                   Flexible(
